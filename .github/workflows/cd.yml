@@ -1,7 +1,9 @@
 name: CD - Deploy to EC2 with Docker (Human trigger)
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   check-image-and-deploy:
