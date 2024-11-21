@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check if Docker Image Exists
+      # Step 1: Checkout code
+      - name: Checkout Repository
+        uses: actions/checkout@v3    
+        
+      # Step 2: Check if Docker Image Exists
       - name: Check if Docker Image Exists
         id: check_image
         run: |
@@ -23,7 +27,7 @@ jobs:
           fi
           echo "Docker image exists. Proceeding to deployment."
 
-      # Step 2: Set AWS Credentials in Environment Variables
+      # Step 3: Set AWS Credentials in Environment Variables
       - name: Set AWS Credentials
         if: ${{ steps.check_image.outcome == 'success' }}
         env:
@@ -33,7 +37,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: echo "AWS credentials set."
 
-      # Step 3: Create EC2 Instance and Deploy the Application
+      # Step 4: Create EC2 Instance and Deploy the Application
       - name: Create EC2 Instance and Deploy the Application
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
