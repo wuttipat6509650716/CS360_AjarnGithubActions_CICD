@@ -14,7 +14,7 @@ jobs:
       - name: Check if Docker Image Exists
         id: check_image
         run: |
-          IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/cs360_calc_image:latest
+          IMAGE_TAG=ajnooncstu/cs360_calc_image:latest
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -u "${{ secrets.DOCKER_USERNAME }}:${{ secrets.DOCKER_TOKEN }}" https://hub.docker.com/v2/repositories/${IMAGE_TAG}/tags/latest/)
           if [ "$RESPONSE" -ne 200 ]; then
             echo "Docker image not found. Exiting workflow."
