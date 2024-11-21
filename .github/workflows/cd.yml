@@ -10,15 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+- name: Check if Docker Image Exists
+  
+
       # Step 1: Check if Docker Image Exists
       - name: Check if Docker Image Exists
         id: check_image
         run: |
-          IMAGE_TAG=ajnooncstu/cs360_calc_image:latest
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -u "${{ secrets.DOCKER_USERNAME }}:${{ secrets.DOCKER_TOKEN }}" https://hub.docker.com/v2/repositories/${IMAGE_TAG}/tags/latest/)
+          REPOSITORY="ajnooncstu/cs360_calc_image"  # Replace with your DockerHub repository name
+          TAG="latest"
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -u "${{ secrets.DOCKER_USERNAME }}:${{ secrets.DOCKER_TOKEN }}" https://hub.docker.com/v2/repositories/${REPOSITORY}/tags/${TAG}/)
           if [ "$RESPONSE" -ne 200 ]; then
-            echo "Docker image not found. Exiting workflow."
-            exit 1
+              echo "Docker image not found. Exiting workflow."
+              exit 1
           fi
           echo "Docker image exists. Proceeding to deployment."
 
