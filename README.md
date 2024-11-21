@@ -2,9 +2,7 @@
 A simple Node.js application with a REST API for basic math operations, unit testing with Jest, and containerization using Docker.
 ---
 
-## Getting Started
-
-### Prerequisites
+## Prerequisites
 
 Ensure you have the following installed:
 
@@ -13,6 +11,7 @@ Ensure you have the following installed:
 
 ---
 
+## Manual Deployment
 ### 1. Clone the Repository
 
 ```bash
@@ -28,6 +27,25 @@ npm start
 
 ### 3. Test API Endpoints: Use a browser, curl, or an API client like Postman
 
+---
+
+## Docker Deployment
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/ajnooncstu/CS360_GithubActions_CICD.git
+cd CS360_GithubActions_CICD
+docker build -t cs360_calc_image .
+```
+
+### 2. Run the Application in a Docker container: 
+
+```bash
+docker run -dp 3000:3000 cs360_calc_image
+```
+
+### 3. Test API Endpoints: Use a browser, curl, or an API client like Postman
 
 ---
 
