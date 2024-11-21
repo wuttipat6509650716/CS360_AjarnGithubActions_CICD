@@ -390,4 +390,9 @@ jobs:
             --output text)
           echo "Instance Public DNS: $INSTANCE_PUBLIC_DNS"
 ```
-
+---
+## Troubleshooting Tips
+- Amazon EC2 logs the execution of the user data script to /var/log/cloud-init-output.log.
+```bash
+cat /var/log/cloud-init-output.log
+```
