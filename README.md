@@ -50,7 +50,7 @@ docker run -dp 3000:3000 cs360_calc_image
 
 ## API Endpoints
 
-### Base URL: `http://<ip-or-dns-of-server>:3000`
+#### Base URL: `http://<ip-or-dns-of-server>:3000`
 
 #### **1. Addition**
 
