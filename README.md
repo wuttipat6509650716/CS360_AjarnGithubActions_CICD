@@ -360,8 +360,8 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: echo "AWS credentials set."
 
-      # Step 2: Create EC2 Instance
-      - name: Create EC2 Instance
+      # Step 3: Create EC2 Instance and Deploy the Application
+      - name: Create EC2 Instance and Deploy the Application
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
