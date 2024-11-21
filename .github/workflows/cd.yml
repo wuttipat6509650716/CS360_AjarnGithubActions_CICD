@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-- name: Check if Docker Image Exists
-  
-
       # Step 1: Check if Docker Image Exists
       - name: Check if Docker Image Exists
         id: check_image
