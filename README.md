@@ -1,6 +1,5 @@
-# CS360_GithubActions_CICD
+# CS360 Github Actions CI/CD
 A simple Node.js application with a REST API for basic math operations, unit testing with Jest, and containerization using Docker.
----
 
 ## Prerequisites
 
