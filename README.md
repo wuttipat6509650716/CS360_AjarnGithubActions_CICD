@@ -282,3 +282,82 @@ jobs:
           docker rm test-container
 
 ```
+---
+
+## Continuous Delivery (CD) Workflow with GitHub Actions
+
+This project leverages **GitHub Actions** for Continuous Delivery (CD) to automate the deployment process.
+
+### cd.yml Workflow Features
+
+1. **Creates an EC2 Instance**:
+   - Automatically launches an EC2 instance using the AWS CLI.
+
+2. **Configure the Instance to Run a Container**
+   - Passes the user-data.sh script to set up and run the Docker container.
+```bash
+#!/bin/bash
+# Update the package manager and install Docker
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -aG docker ec2-user
+
+# Pull and run the Docker container
+sudo docker run -d -p 80:3000 --name ${{ secrets.DOCKER_USERNAME }}/cs360_calc_image:latest
+```
+
+```yaml
+name: CD - Deploy to EC2 with Docker (Human trigger)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-image-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check if Docker Image Exists
+      - name: Check if Docker Image Exists
+        id: check_image
+        run: |
+          IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/cs360_calc_image:latest
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -u "${{ secrets.DOCKER_USERNAME }}:${{ secrets.DOCKER_TOKEN }}" https://hub.docker.com/v2/repositories/${IMAGE_TAG}/tags/latest/)
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Docker image not found. Exiting workflow."
+            exit 1
+          fi
+          echo "Docker image exists. Proceeding to deployment."
+
+      # Step 2: Create EC2 Instance and Deploy
+      - name: Create EC2 Instance and Deploy
+        if: ${{ steps.check_image.outcome == 'success' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          # Define instance details
+          INSTANCE_ID=$(aws ec2 run-instances \
+            --image-id ami-06b21ccaeff8cd686 \  # Replace with an AMI ID for your region
+            --count 1 \
+            --instance-type t2.micro \
+            --key-name ${{ secrets.AWS_KP_NAME }} \  
+            --security-group-ids ${{ secrets.AWS_SG_ID }} \  
+            --user-data file://user-data.sh \  # Use the user data script
+            --query 'Instances[0].InstanceId' \
+            --output text)
+          echo "Instance ID: $INSTANCE_ID"
+
+          # Wait for the instance to be running
+          aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+
+          # Output the instance public DNS
+          INSTANCE_PUBLIC_DNS=$(aws ec2 describe-instances \
+            --instance-ids $INSTANCE_ID \
+            --query 'Reservations[0].Instances[0].PublicDnsName' \
+            --output text)
+          echo "Instance Public DNS: $INSTANCE_PUBLIC_DNS"
+```
+
