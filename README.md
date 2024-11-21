@@ -102,7 +102,7 @@ docker run -dp 3000:3000 cs360_calc_image
 
 This project uses **GitHub Actions** for Continuous Integration (CI) to ensure code quality and test reliability.
 
-### CI-test.yml Workflow Features
+### ci-test.yml Workflow Features
 
 1. **Automated Testing**:
    - Runs the test suite using [Jest](https://jestjs.io/) whenever code is pushed to the `main` branch or a pull request is created.
@@ -164,4 +164,108 @@ jobs:
       # Step 5: Run Jest tests 
       - name: Run Jest Tests 
         run: npm test 
+```
+
+### ci-docker.yml Workflow Features
+
+1. **test-source-code**:
+   - Runs Jest tests on the source code directly to ensure code correctness before building the Docker image.
+
+2. **build-docker**:
+   - Builds the Docker image after the source tests pass.
+   - Pushes the image to DockerHub.
+
+3. **test-docker-image**:
+   - Pulls the built image from DockerHub.
+   - Runs the Docker container and executes the Jest tests inside the container.
+   - Cleans up the container after the tests.
+  
+```yaml
+name: CI - Test Source Code and Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+
+jobs:
+  # Step 1: Test Source Code
+  test-source-code:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14, 16, 18]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Jest Tests 
+        run: npm test
+
+  # Step 2: Build Docker Image
+  build-docker:
+    needs: test-source-code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }} # Use the token here
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cs360_calc_image:latest .
+
+      - name: Push Docker Image to DockerHub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/cs360_calc_image:latest
+
+  # Step 3: Test Docker Image
+  test-docker-image:
+    needs: build-docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }} # Use the token here
+
+      - name: Pull and Run Docker Image
+        run: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/cs360_calc_image:latest
+          docker run -d --name test-container ${{ secrets.DOCKER_USERNAME }}/cs360_calc_image:latest
+
+      - name: Run Automated Tests in Docker Container
+        run: |
+          docker exec test-container npm test 
+
+      - name: Clean Up Docker Container
+        run: |
+          docker stop test-container
+          docker rm test-container
+
 ```
