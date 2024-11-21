@@ -179,7 +179,20 @@ jobs:
    - Pulls the built image from DockerHub.
    - Runs the Docker container and executes the Jest tests inside the container.
    - Cleans up the container after the tests.
-  
+
+#### Create a Personal Access Token on DockerHub:
+- Log in to your DockerHub account.
+- Go to Account Settings > Security > New Access Token.
+- Generate a token, give it a meaningful description (e.g., "GitHub Actions CI"), and copy the token.
+  Note: you will have to copy the token now or you cannot retrieve it again later.
+
+#### Add the Token to GitHub Secrets:
+- Navigate to your GitHub repository.
+- Go to Settings > Secrets and Variables > Actions > New repository secret.
+- Add the following secrets:
+  `DOCKER_USERNAME`: Your DockerHub username.
+  `DOCKER_TOKEN`: The token you generated.
+
 ```yaml
 name: CI - Test Source Code and Docker Image
 
