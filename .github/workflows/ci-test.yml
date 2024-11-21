@@ -1,18 +1,19 @@
 name: CI - Run Automated Test on Push and Pull Request
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-        - 'README.md' # Ignore pushes that only affect README.md
+#  push:
+#    branches:
+#      - main
+#    paths-ignore:
+#        - 'README.md' # Ignore pushes that only affect README.md
         
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-        - 'README.md' # Ignore pull requests that only affect README.md
-
+#  pull_request:
+#    branches:
+#      - main
+#    paths-ignore:
+#        - 'README.md' # Ignore pull requests that only affect README.md
+  workflow_dispatch:
+  
 jobs:
   test:
     runs-on: ubuntu-latest
