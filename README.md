@@ -288,6 +288,36 @@ jobs:
 
 This project leverages **GitHub Actions** for Continuous Delivery (CD) to automate the deployment process.
 
+## Pre-requisites
+
+To successfully run the deployment workflow, the following pre-requisites must be configured:
+
+### AWS Credential and Environment Configuration
+
+Add your AWS credentials as **GitHub Secrets** in your repository:
+
+| Secret Name            | Description                                           |
+|------------------------|-------------------------------------------------------|
+| `AWS_ACCESS_KEY_ID`    | AWS Access Key ID for CLI access.                     |
+| `AWS_SECRET_ACCESS_KEY`| AWS Secret Access Key for CLI access.                 |
+| `AWS_REGION`           | AWS region for deploying the EC2 instance (e.g., `us-east-1`). |
+| `AWS_KP_NAME`          | The name of the AWS Key Pair for accessing the EC2 instance. |
+| `AWS_SG_ID`            | The security group ID for the EC2 instance.           |
+
+---
+
+### User Data Script (`user-data.sh`)
+
+The following user data script is used to configure Docker on the EC2 instance and deploy the application:
+
+```bash
+#!/bin/bash
+# Update the package manager and install Docker
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -aG docker ec2-user
+```
 ### cd.yml Workflow Features
 
 1. **Creates an EC2 Instance**:
