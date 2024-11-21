@@ -121,9 +121,13 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+        - 'README.md' # Ignore pushes that only affect README.md
   pull_request:
     branches:
       - main
+    paths-ignore:
+        - 'README.md' # Ignore pull requests that only affect README.md
 
 jobs:
   test:
@@ -157,7 +161,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # Step 5: Run Jest tests with coverage
-      - name: Run Jest Tests with Coverage
+      # Step 5: Run Jest tests 
+      - name: Run Jest Tests 
         run: npm test 
 ```
