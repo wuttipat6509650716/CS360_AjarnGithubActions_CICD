@@ -138,8 +138,8 @@ This project uses **GitHub Actions** for Continuous Integration (CI) to ensure c
 - Navigate to your GitHub repository.
 - Go to Settings > Secrets and Variables > Actions > New repository secret.
 - Add the following secrets:
-  `DOCKER_USERNAME`: Your DockerHub username.
-  `DOCKER_TOKEN`: The token you generated.
+  1. `DOCKER_USERNAME`: Your DockerHub username.
+  2. `DOCKER_TOKEN`: The token you generated.
 
 ---
 
