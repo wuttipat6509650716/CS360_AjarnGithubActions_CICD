@@ -300,6 +300,7 @@ Add your AWS credentials as **GitHub Secrets** in your repository:
 |------------------------|-------------------------------------------------------|
 | `AWS_ACCESS_KEY_ID`    | AWS Access Key ID for CLI access.                     |
 | `AWS_SECRET_ACCESS_KEY`| AWS Secret Access Key for CLI access.                 |
+| `AWS_SESSION_TOKEN`     | AWS Session Token for temporary credentials (Required when using Learner Lab). |
 | `AWS_REGION`           | AWS region for deploying the EC2 instance (e.g., `us-east-1`). |
 | `AWS_KP_NAME`          | The name of the AWS Key Pair for accessing the EC2 instance. |
 | `AWS_SG_ID`            | The security group ID for the EC2 instance.           |
@@ -349,12 +350,22 @@ jobs:
           fi
           echo "Docker image exists. Proceeding to deployment."
 
-      # Step 2: Create EC2 Instance and Deploy
-      - name: Create EC2 Instance and Deploy
+      # Step 2: Set AWS Credentials in Environment Variables
+      - name: Set AWS Credentials
         if: ${{ steps.check_image.outcome == 'success' }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: echo "AWS credentials set."
+
+      # Step 2: Create EC2 Instance
+      - name: Create EC2 Instance
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           # Define instance details
